@@ -14,7 +14,7 @@
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",
-    "ios_application",
+    "ios_framework",
 )
 load(
     "//mediapipe/examples/ios:bundle_id.bzl",
@@ -27,48 +27,38 @@ licenses(["notice"])
 MIN_IOS_VERSION = "12.0"
 
 alias(
-    name = "holistictrackinggpu",
-    actual = "HolisticTrackingGpuApp",
+    name = "upperbodyposetracker",
+    actual = "UpperBodyPoseTrackerApp",
 )
 
-ios_application(
-    name = "HolisticTrackingGpuApp",
-    app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
-    bundle_id = BUNDLE_ID_PREFIX + ".HolisticTrackingGpu",
-    families = [
-        "iphone",
-        "ipad",
+ios_framework(
+    name = "UpperBodyPoseTracker",
+    hdrs = [
+        "UpperBodyPoseTracker.h",
     ],
-    infoplists = [
-        "//mediapipe/examples/ios/common:Info.plist",
-        "Info.plist",
-    ],
+    infoplists = ["Info.plist"],
+    bundle_id = BUNDLE_ID_PREFIX + ".UpperBodyPoseTracker",
+    families = ["iphone", "ipad"],
     minimum_os_version = MIN_IOS_VERSION,
     provisioning_profile = example_provisioning(),
     deps = [
-        ":HolisticTrackingGpuAppLibrary",
+        ":UpperBodyPoseTrackerLibrary",
         "@ios_opencv//:OpencvFramework",
     ],
 )
 
 objc_library(
-    name = "HolisticTrackingGpuAppLibrary",
+    name = "UpperBodyPoseTrackerLibrary",
     srcs = [
-        "HolisticTrackingGpuController.mm",
+        "UpperBodyPoseTracker.mm",
     ],
     hdrs = [
-        "HolisticTrackingGpuController.h",
+        "UpperBodyPoseTracker.h",
     ],
     data = [
-        "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu.binarypb",
-        "//mediapipe/modules/face_detection:face_detection_short_range.tflite",
-        "//mediapipe/modules/face_landmark:face_landmark.tflite",
-        "//mediapipe/modules/hand_landmark:hand_landmark_full.tflite",
-        "//mediapipe/modules/hand_landmark:hand_landmark_lite.tflite",
-        "//mediapipe/modules/hand_landmark:handedness.txt",
-        "//mediapipe/modules/holistic_landmark:hand_recrop.tflite",
+        "//mediapipe/graphs/pose_tracking:upper_body_pose_tracking_gpu.binarypb",
         "//mediapipe/modules/pose_detection:pose_detection.tflite",
-        "//mediapipe/modules/pose_landmark:pose_landmark_full.tflite",
+        "//mediapipe/modules/pose_landmark:pose_landmark_upper_body.tflite",
     ],
     deps = [
         "//mediapipe/examples/ios/common:CommonMediaPipeAppLibrary",
@@ -76,7 +66,8 @@ objc_library(
         "//mediapipe:ios_i386": [],
         "//mediapipe:ios_x86_64": [],
         "//conditions:default": [
-            "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu_deps",
+            "//mediapipe/graphs/pose_tracking:upper_body_pose_tracking_gpu_deps",
+            "//mediapipe/framework/formats:landmark_cc_proto",
         ],
     }),
 )

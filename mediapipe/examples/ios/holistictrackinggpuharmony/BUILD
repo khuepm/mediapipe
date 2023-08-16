@@ -27,14 +27,14 @@ licenses(["notice"])
 MIN_IOS_VERSION = "12.0"
 
 alias(
-    name = "holistictrackinggpu",
-    actual = "HolisticTrackingGpuApp",
+    name = "holistictrackinggpuharmony",
+    actual = "HolisticTrackingGpuHarmonyApp",
 )
 
 ios_application(
-    name = "HolisticTrackingGpuApp",
+    name = "HolisticTrackingGpuHarmonyApp",
     app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
-    bundle_id = BUNDLE_ID_PREFIX + ".HolisticTrackingGpu",
+    bundle_id = BUNDLE_ID_PREFIX + ".HolisticTrackingGpuHarmony",
     families = [
         "iphone",
         "ipad",
@@ -46,18 +46,18 @@ ios_application(
     minimum_os_version = MIN_IOS_VERSION,
     provisioning_profile = example_provisioning(),
     deps = [
-        ":HolisticTrackingGpuAppLibrary",
+        ":HolisticTrackingGpuHarmonyAppLibrary",
         "@ios_opencv//:OpencvFramework",
     ],
 )
 
 objc_library(
-    name = "HolisticTrackingGpuAppLibrary",
+    name = "HolisticTrackingGpuHarmonyAppLibrary",
     srcs = [
-        "HolisticTrackingGpuController.mm",
+        "HolisticTrackingGpuHarmonyController.mm",
     ],
     hdrs = [
-        "HolisticTrackingGpuController.h",
+        "HolisticTrackingGpuHarmonyController.h",
     ],
     data = [
         "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu.binarypb",
