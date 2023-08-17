@@ -3,6 +3,7 @@
     "/BUILD",
     "mediapipe/BUILD",
     "mediapipe/examples/ios/common/BUILD",
+    "mediapipe/examples/ios/holistictrackinggpu/BUILD",
     "mediapipe/examples/ios/holistictrackinggpuharmony/BUILD",
     "mediapipe/framework/BUILD",
     "mediapipe/gpu/BUILD",
@@ -10,6 +11,7 @@
     "mediapipe/objc/testing/app/BUILD"
   ],
   "buildTargets" : [
+    "@//mediapipe/examples/ios/holistictrackinggpu:HolisticTrackingGpuApp",
     "@//mediapipe/examples/ios/holistictrackinggpuharmony:HolisticTrackingGpuHarmonyApp",
     "@//mediapipe/objc:mediapipe_framework_ios"
   ],
@@ -67,6 +69,7 @@
     "mediapipe/examples/ios",
     "mediapipe/examples/ios/common",
     "mediapipe/examples/ios/common/Base.lproj",
+    "mediapipe/examples/ios/holistictrackinggpu",
     "mediapipe/examples/ios/holistictrackinggpuharmony",
     "mediapipe/framework",
     "mediapipe/framework/deps",

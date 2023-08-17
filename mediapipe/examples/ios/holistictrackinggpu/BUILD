@@ -14,7 +14,7 @@
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",
-    "ios_application",
+    "ios_framework",
 )
 load(
     "//mediapipe/examples/ios:bundle_id.bzl",
@@ -31,9 +31,9 @@ alias(
     actual = "HolisticTrackingGpuApp",
 )
 
-ios_application(
+ios_framework(
     name = "HolisticTrackingGpuApp",
-    app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
+    # app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
     bundle_id = BUNDLE_ID_PREFIX + ".HolisticTrackingGpu",
     families = [
         "iphone",
@@ -53,12 +53,6 @@ ios_application(
 
 objc_library(
     name = "HolisticTrackingGpuAppLibrary",
-    srcs = [
-        "HolisticTrackingGpuController.mm",
-    ],
-    hdrs = [
-        "HolisticTrackingGpuController.h",
-    ],
     data = [
         "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu.binarypb",
         "//mediapipe/modules/face_detection:face_detection_short_range.tflite",

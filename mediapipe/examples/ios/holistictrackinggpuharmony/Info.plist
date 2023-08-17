@@ -10,5 +10,9 @@
   <string>input_video</string>
   <key>GraphName</key>
   <string>holistic_tracking_gpu</string>
+  <key>FPS</key>
+  <string>fps_number</string>
+  <key>JSONData</key>
+  <string>json_data</string>
 </dict>
 </plist>

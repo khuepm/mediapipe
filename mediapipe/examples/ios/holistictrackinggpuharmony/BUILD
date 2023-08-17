@@ -14,7 +14,7 @@
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",
-    "ios_application",
+    "ios_framework",
 )
 load(
     "//mediapipe/examples/ios:bundle_id.bzl",
@@ -28,12 +28,15 @@ MIN_IOS_VERSION = "12.0"
 
 alias(
     name = "holistictrackinggpuharmony",
-    actual = "HolisticTrackingGpuHarmonyApp",
+    actual = "HolisticTrackingGpuHarmonyFramework",
 )
 
-ios_application(
-    name = "HolisticTrackingGpuHarmonyApp",
-    app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
+ios_framework(
+    name = "HolisticTrackingGpuHarmonyFramework",
+    hdrs = [
+        "HolisticTrackingGpuHarmony.h",
+    ],
+#    app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
     bundle_id = BUNDLE_ID_PREFIX + ".HolisticTrackingGpuHarmony",
     families = [
         "iphone",
@@ -54,13 +57,13 @@ ios_application(
 objc_library(
     name = "HolisticTrackingGpuHarmonyAppLibrary",
     srcs = [
-        "HolisticTrackingGpuHarmonyController.mm",
+        "HolisticTrackingGpuHarmony.mm",
     ],
     hdrs = [
-        "HolisticTrackingGpuHarmonyController.h",
+        "HolisticTrackingGpuHarmony.h",
     ],
     data = [
-        "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu.binarypb",
+        "//mediapipe/graphs/holistic_tracking_harmony:holistic_upper_body_pose_tracking.binarypb",
         "//mediapipe/modules/face_detection:face_detection_short_range.tflite",
         "//mediapipe/modules/face_landmark:face_landmark.tflite",
         "//mediapipe/modules/hand_landmark:hand_landmark_full.tflite",
@@ -76,7 +79,7 @@ objc_library(
         "//mediapipe:ios_i386": [],
         "//mediapipe:ios_x86_64": [],
         "//conditions:default": [
-            "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu_deps",
+            "//mediapipe/graphs/holistic_tracking_harmony:holistic_upper_body_pose_tracking_gpu_graph_deps",
         ],
     }),
 )

@@ -68,3 +68,21 @@ cc_library(
         "//mediapipe/modules/holistic_landmark:holistic_landmark_cpu",
     ],
 )
+
+mediapipe_binary_graph(
+    name = "holistic_upper_body_pose_tracking",
+    graph = "holistic_upper_body_pose_tracking.pbtxt",
+    output_name = "holistic_upper_body_pose_tracking.binarypb",
+    deps = [":holistic_upper_body_pose_tracking_gpu_graph_deps"],
+)
+
+cc_library(
+    name = "holistic_upper_body_pose_tracking_gpu_graph_deps",
+    deps = [
+        ":holistic_tracking_to_render_data",
+        "//mediapipe/calculators/core:flow_limiter_calculator",
+        "//mediapipe/calculators/image:image_properties_calculator",
+        "//mediapipe/calculators/util:annotation_overlay_calculator",
+        "//mediapipe/modules/holistic_landmark:holistic_landmark_cpu",
+    ],
+)
