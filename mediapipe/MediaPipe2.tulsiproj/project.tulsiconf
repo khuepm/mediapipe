@@ -1,0 +1,18 @@
+{
+  "configDefaults" : {
+    "optionSet" : {
+      "CLANG_CXX_LANGUAGE_STANDARD" : {
+        "p" : "c++14"
+      }
+    }
+  },
+  "packages" : [
+    "",
+    "mediapipe",
+    "mediapipe/examples/ios",
+    "mediapipe/examples/ios/upperbodyposetrackergpu",
+    "mediapipe/objc"
+  ],
+  "projectName" : "Mediapipe",
+  "workspaceRoot" : "../.."
+}
