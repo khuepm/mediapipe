@@ -25,12 +25,12 @@ OneEuroFilter::OneEuroFilter(double frequency, double min_cutoff, double beta,
 double OneEuroFilter::Apply(absl::Duration timestamp, double value_scale,
                             double value) {
   int64_t new_timestamp = absl::ToInt64Nanoseconds(timestamp);
-  if (last_time_ >= new_timestamp) {
-    // Results are unpredictable in this case, so nothing to do but
-    // return same value
-    LOG(WARNING) << "New timestamp is equal or less than the last one.";
-    return value;
-  }
+  // if (last_time_ >= new_timestamp) {
+  //   // Results are unpredictable in this case, so nothing to do but
+  //   // return same value
+  //   LOG(WARNING) << "New timestamp is equal or less than the last one.";
+  //   return value;
+  // }
 
   // update the sampling frequency based on timestamps
   if (last_time_ != 0 && new_timestamp != 0) {

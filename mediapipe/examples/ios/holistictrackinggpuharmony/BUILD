@@ -63,7 +63,7 @@ objc_library(
         "HolisticTrackingGpuHarmony.h",
     ],
     data = [
-        "//mediapipe/graphs/holistic_tracking_harmony:holistic_upper_body_pose_tracking.binarypb",
+        "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu.binarypb",
         "//mediapipe/modules/face_detection:face_detection_short_range.tflite",
         "//mediapipe/modules/face_landmark:face_landmark.tflite",
         "//mediapipe/modules/hand_landmark:hand_landmark_full.tflite",
@@ -79,7 +79,7 @@ objc_library(
         "//mediapipe:ios_i386": [],
         "//mediapipe:ios_x86_64": [],
         "//conditions:default": [
-            "//mediapipe/graphs/holistic_tracking_harmony:holistic_upper_body_pose_tracking_gpu_graph_deps",
+            "//mediapipe/graphs/holistic_tracking:holistic_tracking_gpu_deps",
         ],
     }),
 )
