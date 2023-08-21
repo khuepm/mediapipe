@@ -64,7 +64,7 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
         self.mediapipeGraph = [[self class] loadGraphFromResource:kGraphName];
         self.mediapipeGraph.delegate = self;
         // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
-        self.mediapipeGraph.maxFramesInFlight = 2;
+        self.mediapipeGraph.maxFramesInFlight = 3;
     }
     return self;
 }
