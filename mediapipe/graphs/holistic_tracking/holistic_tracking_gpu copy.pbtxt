@@ -30,8 +30,8 @@ node {
   output_stream: "throttled_input_video"
   node_options: {
     [type.googleapis.com/mediapipe.FlowLimiterCalculatorOptions] {
-      max_in_flight: 1
-      max_in_queue: 1
+      max_in_flight: 3
+      max_in_queue: 3
       # Timeout is disabled (set to 0) as first frame processing can take more
       # than 1 second.
       in_flight_timeout: 0
@@ -41,17 +41,19 @@ node {
 
 node {
   calculator: "ConstantSidePacketCalculator"
-  output_side_packet: "PACKET:use_prev_landmarks"
+  output_side_packet: "PACKET:0:smooth_landmarks"
+  output_side_packet: "PACKET:1:num_faces"
   node_options: {
     [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
       packet { bool_value: false }
+      packet { int_value: 2 }
     }
   }
 }
 
 node {
   calculator: "HolisticLandmarkGpu"
-  input_side_packet: "USE_PREV_LANDMARKS:use_prev_landmarks"
+  input_side_packet: "SMOOTH_LANDMARKS:smooth_landmarks"
   input_stream: "IMAGE:throttled_input_video"
   output_stream: "POSE_LANDMARKS:pose_landmarks"
   output_stream: "POSE_ROI:pose_roi"

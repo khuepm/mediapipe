@@ -14,7 +14,7 @@
 
 load(
     "@build_bazel_rules_apple//apple:ios.bzl",
-    "ios_framework",
+    "ios_application",
 )
 load(
     "//mediapipe/examples/ios:bundle_id.bzl",
@@ -27,16 +27,13 @@ licenses(["notice"])
 MIN_IOS_VERSION = "12.0"
 
 alias(
-    name = "holistictrackinggpuharmony",
-    actual = "HolisticTrackingGpuHarmony",
+    name = "facemeshgpu",
+    actual = "FaceMeshGpuApp",
 )
 
-ios_framework(
-    name = "HolisticTrackingGpuHarmony",
-    hdrs = [
-        "FaceTest.h",
-    ],
-    # app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
+ios_application(
+    name = "FaceMeshGpuApp",
+    app_icons = ["//mediapipe/examples/ios/common:AppIcon"],
     bundle_id = BUNDLE_ID_PREFIX + ".FaceMeshGpu",
     families = [
         "iphone",
@@ -49,18 +46,18 @@ ios_framework(
     minimum_os_version = MIN_IOS_VERSION,
     provisioning_profile = example_provisioning(),
     deps = [
-        ":HolisticTrackingGpuHarmonyLibrary",
+        ":FaceMeshGpuAppLibrary",
         "@ios_opencv//:OpencvFramework",
     ],
 )
 
 objc_library(
-    name = "HolisticTrackingGpuHarmonyLibrary",
+    name = "FaceMeshGpuAppLibrary",
     srcs = [
-        "FaceTest.mm",
+        "FaceMeshGpuViewController.mm",
     ],
     hdrs = [
-        "FaceTest.h",
+        "FaceMeshGpuViewController.h",
     ],
     copts = ["-std=c++17"],
     data = [

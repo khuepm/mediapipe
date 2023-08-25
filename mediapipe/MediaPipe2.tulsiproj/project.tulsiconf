@@ -10,8 +10,7 @@
     "",
     "mediapipe",
     "mediapipe/examples/ios",
-    "mediapipe/examples/ios/holistictrackinggpuharmony",
-    "mediapipe/examples/ios/holistictrackinggpu",
+    "mediapipe/examples/ios/facemeshappgpu",
     "mediapipe/objc"
   ],
   "projectName" : "Mediapipe",

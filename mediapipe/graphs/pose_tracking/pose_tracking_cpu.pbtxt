@@ -17,7 +17,7 @@ node {
       packet { bool_value: true }
     }
   }
-}
+} 
 
 # Throttles the images flowing downstream for flow control. It passes through
 # the very first incoming image unaltered, and waits for downstream nodes

@@ -1,0 +1,130 @@
+#import "FaceTest.h"
+#import "mediapipe/objc/MPPGraph.h"
+#import "mediapipe/objc/MPPCameraInputSource.h"
+#import "mediapipe/objc/MPPLayerRenderer.h"
+#include "mediapipe/framework/formats/landmark.pb.h"
+
+static NSString* const kGraphName = @"face_mesh_mobile_gpu";
+static const char* kInputStream = "input_video";
+static const char* kOutputStream = "output_video";
+
+// static const char* kNumFacesInputSidePacket = "num_faces";
+static const char* kLandmarksOutputStream = "output_video";
+// static const int kNumFaces = 3;
+
+// static const char* kLandmarksOutputStream = "pose_landmarks";
+// static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
+
+// Global variables
+// NSMutableArray<MPose *> *poseEstimator;
+// NSMutableArray<NSArray<NSNumber *> *> *poseEstimatorDim;
+// NSUInteger selectedPoseIdx;
+
+@interface HolisticTrackingGpuHarmony() <MPPGraphDelegate>
+@property(nonatomic) MPPGraph* mediapipeGraph;
+@end
+
+@interface Landmark()
+- (instancetype)initWithX:(float)x y:(float)y z:(float)z;
+@end
+
+@implementation HolisticTrackingGpuHarmony {}
+
+#pragma mark - Cleanup methods
+
+- (void)dealloc {
+    self.mediapipeGraph.delegate = nil;
+    [self.mediapipeGraph cancel];
+    // Ignore errors since we're cleaning up.
+    [self.mediapipeGraph closeAllInputStreamsWithError:nil];
+    [self.mediapipeGraph waitUntilDoneWithError:nil];
+}
+
+#pragma mark - MediaPipe graph methods
+
++ (MPPGraph*)loadGraphFromResource:(NSString*)resource {
+    // Load the graph config resource.
+    NSError* configLoadError = nil;
+    NSBundle* bundle = [NSBundle bundleForClass:[self class]];
+    if (!resource || resource.length == 0) {
+        return nil;
+    }
+    NSURL* graphURL = [bundle URLForResource:resource withExtension:@"binarypb"];
+    NSData* data = [NSData dataWithContentsOfURL:graphURL options:0 error:&configLoadError];
+    if (!data) {
+        NSLog(@"Failed to load MediaPipe graph config: %@", configLoadError);
+        return nil;
+    }
+    
+    // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
+    mediapipe::CalculatorGraphConfig config;
+    config.ParseFromArray(data.bytes, data.length);
+
+    // Serialize the config to a string for logging
+    // std::string serializedConfig = config.SerializeAsString();
+    // NSString* configString = [NSString stringWithUTF8String:serializedConfig.c_str()];
+    // NSLog(@"Graph config: %@", configString);
+    
+    // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
+    MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
+    [newGraph addFrameOutputStream:kOutputStream
+              outputPacketType:MPPPacketTypePixelBuffer];
+    [newGraph addFrameOutputStream:kLandmarksOutputStream outputPacketType:MPPPacketTypeRaw];
+    return newGraph;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.mediapipeGraph = [[self class] loadGraphFromResource:kGraphName];
+        self.mediapipeGraph.delegate = self;
+        // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
+        self.mediapipeGraph.maxFramesInFlight = 3;
+    }
+    return self;
+}
+
+- (void)startGraph {
+    // Start running self.mediapipeGraph.
+    NSError* error;
+    if (![self.mediapipeGraph startWithError:&error]) {
+        NSLog(@"Failed to start graph: %@", error);
+    }
+}
+
+#pragma mark - MPPGraphDelegate methods
+
+// Receives CVPixelBufferRef from the MediaPipe graph. Invoked on a MediaPipe worker thread.
+- (void)mediapipeGraph:(MPPGraph*)graph
+  didOutputPixelBuffer:(CVPixelBufferRef)pixelBuffer
+            fromStream:(const std::string&)streamName{
+      if (streamName == kOutputStream) {
+          [_delegate upperBodyPoseTracker: self didOutputPixelBuffer: pixelBuffer];
+      }
+}
+
+- (void)sendPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+    [self.mediapipeGraph sendPixelBuffer:pixelBuffer
+                              intoStream:kInputStream
+                              packetType:MPPPacketTypePixelBuffer];
+}
+
+
+@end
+
+
+@implementation Landmark
+
+- (instancetype)initWithX:(float)x y:(float)y z:(float)z
+{
+    self = [super init];
+    if (self) {
+        _x = x;
+        _y = y;
+        _z = z;
+    }
+    return self;
+}
+
+@end

@@ -3,16 +3,14 @@
     "/BUILD",
     "mediapipe/BUILD",
     "mediapipe/examples/ios/common/BUILD",
-    "mediapipe/examples/ios/holistictrackinggpu/BUILD",
-    "mediapipe/examples/ios/holistictrackinggpuharmony/BUILD",
+    "mediapipe/examples/ios/facemeshappgpu/BUILD",
     "mediapipe/framework/BUILD",
     "mediapipe/gpu/BUILD",
     "mediapipe/objc/BUILD",
     "mediapipe/objc/testing/app/BUILD"
   ],
   "buildTargets" : [
-    "@//mediapipe/examples/ios/holistictrackinggpu:HolisticTrackingGpuApp",
-    "@//mediapipe/examples/ios/holistictrackinggpuharmony:HolisticTrackingGpuHarmonyApp",
+    "@//mediapipe/examples/ios/facemeshappgpu:FaceMeshGpuApp",
     "@//mediapipe/objc:mediapipe_framework_ios"
   ],
   "optionSet" : {
@@ -69,8 +67,7 @@
     "mediapipe/examples/ios",
     "mediapipe/examples/ios/common",
     "mediapipe/examples/ios/common/Base.lproj",
-    "mediapipe/examples/ios/holistictrackinggpu",
-    "mediapipe/examples/ios/holistictrackinggpuharmony",
+    "mediapipe/examples/ios/facemeshappgpu",
     "mediapipe/framework",
     "mediapipe/framework/deps",
     "mediapipe/framework/formats",

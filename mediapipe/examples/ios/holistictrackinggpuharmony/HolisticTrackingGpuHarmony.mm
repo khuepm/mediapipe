@@ -10,6 +10,11 @@ static const char* kOutputStream = "output_video";
 static const char* kLandmarksOutputStream = "pose_landmarks";
 static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 
+// Global variables
+// NSMutableArray<MPose *> *poseEstimator;
+// NSMutableArray<NSArray<NSNumber *> *> *poseEstimatorDim;
+// NSUInteger selectedPoseIdx;
+
 @interface HolisticTrackingGpuHarmony() <MPPGraphDelegate>
 @property(nonatomic) MPPGraph* mediapipeGraph;
 @end
@@ -49,6 +54,7 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     // Parse the graph config resource into mediapipe::CalculatorGraphConfig proto object.
     mediapipe::CalculatorGraphConfig config;
     config.ParseFromArray(data.bytes, data.length);
+    // NSLog(@"Graph config: %@", config);
     
     // Create MediaPipe graph with mediapipe::CalculatorGraphConfig proto object.
     MPPGraph* newGraph = [[MPPGraph alloc] initWithGraphConfig:config];
@@ -64,7 +70,7 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
         self.mediapipeGraph = [[self class] loadGraphFromResource:kGraphName];
         self.mediapipeGraph.delegate = self;
         // Set maxFramesInFlight to a small value to avoid memory contention for real-time processing.
-        self.mediapipeGraph.maxFramesInFlight = 3;
+        self.mediapipeGraph.maxFramesInFlight = 2;
     }
     return self;
 }
@@ -111,11 +117,76 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
     }
 }
 
-- (void)sendPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+- (void)sendPixelBuffer:(CVPixelBufferRef)pixelBuffer{
     [self.mediapipeGraph sendPixelBuffer:pixelBuffer
                               intoStream:kInputStream
                               packetType:MPPPacketTypePixelBuffer];
 }
+
+// Function to compare distances
+// - (CGFloat)compareDist:(NSArray<NSNumber *> *)dim withBoundary:(NSArray<NSNumber *> *)boundary {
+//     // Implement the logic to compare distances here
+//     // Return the calculated score
+//     return 0.0; // Replace with actual score
+// }
+
+// Function to detect and process pose
+// - (void)processDetectedPoseWithBoundary:(NSArray<NSNumber *> *)boundary objectId:(NSUInteger)objectId {
+//     if (poseEstimator.count == 0) {
+//         MPose *pose = [[MPose alloc] initWithMinDetectionConfidence:0.6 minTrackingConfidence:0.6];
+//         [poseEstimator addObject:pose];
+//         [poseEstimatorDim addObject:boundary];
+//         selectedPoseIdx = poseEstimator.count - 1;
+//     } else if (objectId >= poseEstimator.count) {
+//         CGFloat thresholdForNew = 100.0;
+//         CGFloat prevHighScore = 0.0;
+//         NSUInteger selectedPoseIdxHigh = 0;
+//         CGFloat prevLowScore = 1000000000.0;
+//         NSUInteger selectedPoseIdxLow = 0;
+//         NSUInteger poseIdx = 0;
+        
+//         for (NSArray<NSNumber *> *dim in poseEstimatorDim) {
+//             CGFloat score = [self compareDist:dim withBoundary:boundary];
+//             if (score > prevHighScore) {
+//                 selectedPoseIdxHigh = poseIdx;
+//                 prevHighScore = score;
+//             }
+//             if (score < prevLowScore) {
+//                 selectedPoseIdxLow = poseIdx;
+//                 prevLowScore = score;
+//             }
+//             poseIdx++;
+//         }
+        
+//         if (prevHighScore > thresholdForNew) {
+//             MPose *pose = [[MPose alloc] initWithMinDetectionConfidence:0.6 minTrackingConfidence:0.6];
+//             [poseEstimator addObject:pose];
+//             [poseEstimatorDim addObject:boundary];
+//             selectedPoseIdx = poseEstimator.count - 1;
+//         } else {
+//             selectedPoseIdx = selectedPoseIdxLow;
+//         }
+//         poseEstimatorDim[selectedPoseIdx] = boundary;
+//     } else {
+//         NSUInteger poseIdx = 0;
+//         CGFloat prevScore = 1000000000.0;
+        
+//         for (NSArray<NSNumber *> *dim in poseEstimatorDim) {
+//             CGFloat score = [self compareDist:dim withBoundary:boundary];
+//             if (score < prevScore) {
+//                 selectedPoseIdx = poseIdx;
+//                 prevScore = score;
+//             }
+//             poseIdx++;
+//         }
+//         poseEstimatorDim[selectedPoseIdx] = boundary;
+//     }
+// }
+
+// Initialize global variables
+// poseEstimator = [NSMutableArray array];
+// poseEstimatorDim = [NSMutableArray array];
+// selectedPoseIdx = 0;
 
 @end
 
