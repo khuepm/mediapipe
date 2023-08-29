@@ -8,6 +8,7 @@ static NSString* const kGraphName = @"holistic_tracking_gpu";
 static const char* kInputStream = "input_video";
 static const char* kOutputStream = "output_video";
 static const char* kLandmarksOutputStream = "pose_landmarks";
+static const char* kFaceLandmarksOutputStream = "multi_face_landmarks";
 static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
 
 // Global variables
@@ -102,10 +103,11 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
         if (packet.IsEmpty()) { return; }
         const auto& landmarks = packet.Get<::mediapipe::NormalizedLandmarkList>();
         
-        //        for (int i = 0; i < landmarks.landmark_size(); ++i) {
-        //            NSLog(@"\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
-        //                  landmarks.landmark(i).y(), landmarks.landmark(i).z());
-        //        }
+        NSLog(@"[TS:%lld] Number of pose landmarks: %d", packet.Timestamp().Value(), landmarks.landmark_size());
+        for (int i = 0; i < landmarks.landmark_size(); ++i) {
+        NSLog(@"\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
+                landmarks.landmark(i).y(), landmarks.landmark(i).z());
+        }
         NSMutableArray<Landmark *> *result = [NSMutableArray array];
         for (int i = 0; i < landmarks.landmark_size(); ++i) {
             Landmark *landmark = [[Landmark alloc] initWithX:landmarks.landmark(i).x()
@@ -115,6 +117,25 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
         }
         [_delegate upperBodyPoseTracker: self didOutputLandmarks: result];
     }
+    
+    if (streamName == kFaceLandmarksOutputStream) {
+      if (packet.IsEmpty()) {
+          NSLog(@"[TS:%lld] No face landmarks", packet.Timestamp().Value());
+          return;
+      }
+      const auto& multi_face_landmarks = packet.Get<std::vector<::mediapipe::NormalizedLandmarkList>>();
+      NSLog(@"[TS:%lld] Number of face instances with landmarks: %lu", packet.Timestamp().Value(),
+          multi_face_landmarks.size());
+
+      for (int face_index = 0; face_index < multi_face_landmarks.size(); ++face_index) {
+        const auto& landmarks = multi_face_landmarks[face_index];
+        NSLog(@"\tNumber of landmarks for face[%d]: %d", face_index, landmarks.landmark_size());
+        for (int i = 0; i < landmarks.landmark_size(); ++i) {
+            NSLog(@"\t\tLandmark[%d]: (%f, %f, %f)", i, landmarks.landmark(i).x(),
+                landmarks.landmark(i).y(), landmarks.landmark(i).z());
+        }
+      }
+    }
 }
 
 - (void)sendPixelBuffer:(CVPixelBufferRef)pixelBuffer{
@@ -122,71 +143,6 @@ static const char* kVideoQueueLabel = "com.google.mediapipe.example.videoQueue";
                               intoStream:kInputStream
                               packetType:MPPPacketTypePixelBuffer];
 }
-
-// Function to compare distances
-// - (CGFloat)compareDist:(NSArray<NSNumber *> *)dim withBoundary:(NSArray<NSNumber *> *)boundary {
-//     // Implement the logic to compare distances here
-//     // Return the calculated score
-//     return 0.0; // Replace with actual score
-// }
-
-// Function to detect and process pose
-// - (void)processDetectedPoseWithBoundary:(NSArray<NSNumber *> *)boundary objectId:(NSUInteger)objectId {
-//     if (poseEstimator.count == 0) {
-//         MPose *pose = [[MPose alloc] initWithMinDetectionConfidence:0.6 minTrackingConfidence:0.6];
-//         [poseEstimator addObject:pose];
-//         [poseEstimatorDim addObject:boundary];
-//         selectedPoseIdx = poseEstimator.count - 1;
-//     } else if (objectId >= poseEstimator.count) {
-//         CGFloat thresholdForNew = 100.0;
-//         CGFloat prevHighScore = 0.0;
-//         NSUInteger selectedPoseIdxHigh = 0;
-//         CGFloat prevLowScore = 1000000000.0;
-//         NSUInteger selectedPoseIdxLow = 0;
-//         NSUInteger poseIdx = 0;
-        
-//         for (NSArray<NSNumber *> *dim in poseEstimatorDim) {
-//             CGFloat score = [self compareDist:dim withBoundary:boundary];
-//             if (score > prevHighScore) {
-//                 selectedPoseIdxHigh = poseIdx;
-//                 prevHighScore = score;
-//             }
-//             if (score < prevLowScore) {
-//                 selectedPoseIdxLow = poseIdx;
-//                 prevLowScore = score;
-//             }
-//             poseIdx++;
-//         }
-        
-//         if (prevHighScore > thresholdForNew) {
-//             MPose *pose = [[MPose alloc] initWithMinDetectionConfidence:0.6 minTrackingConfidence:0.6];
-//             [poseEstimator addObject:pose];
-//             [poseEstimatorDim addObject:boundary];
-//             selectedPoseIdx = poseEstimator.count - 1;
-//         } else {
-//             selectedPoseIdx = selectedPoseIdxLow;
-//         }
-//         poseEstimatorDim[selectedPoseIdx] = boundary;
-//     } else {
-//         NSUInteger poseIdx = 0;
-//         CGFloat prevScore = 1000000000.0;
-        
-//         for (NSArray<NSNumber *> *dim in poseEstimatorDim) {
-//             CGFloat score = [self compareDist:dim withBoundary:boundary];
-//             if (score < prevScore) {
-//                 selectedPoseIdx = poseIdx;
-//                 prevScore = score;
-//             }
-//             poseIdx++;
-//         }
-//         poseEstimatorDim[selectedPoseIdx] = boundary;
-//     }
-// }
-
-// Initialize global variables
-// poseEstimator = [NSMutableArray array];
-// poseEstimatorDim = [NSMutableArray array];
-// selectedPoseIdx = 0;
 
 @end
 

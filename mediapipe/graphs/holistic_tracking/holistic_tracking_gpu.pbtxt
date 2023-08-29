@@ -8,6 +8,7 @@ output_stream: "output_video"
 
 # Pose landmarks. (NormalizedLandmarkList)
 output_stream: "pose_landmarks"
+output_stream: "face_landmarks"
 
 # Throttles the images flowing downstream for flow control. It passes through
 # the very first incoming image unaltered, and waits for downstream nodes
